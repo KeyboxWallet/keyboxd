@@ -1,0 +1,6 @@
+[submodule "depends/jsonrpc-server-lib"]
+	path = depends/jsonrpc-server-lib
+	url = https://github.com/KeyboxWallet/jsonrpc-server-lib.git
+[submodule "depends/protodef"]
+	path = depends/protodef
+	url = https://github.com/KeyboxWallet/protodef.git

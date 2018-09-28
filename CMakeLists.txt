@@ -15,7 +15,6 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 if (UNIX)
  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
 endif()
-INCLUDE_DIRECTORIES( ../json_rpc_lib ../json_lib/include )
 if (UNIX)
  find_package(PkgConfig)
  pkg_check_modules (LIBUSB REQUIRED libusb-1.0)
@@ -33,8 +32,10 @@ elseif (WIN32)
  SET(LIBUSB_LIBRARIES_DEBUG ${LIBUSB_LIBRARIES_DIR_DEBUG}/lib/libusb-1.0.lib)
  SET(LIBUSB_LIBRARIES_REL ${LIBUSB_LIBRARIES_DIR_REL}/lib/libusb-1.0.lib)
 endif()
-INCLUDE_DIRECTORIES(../protodef)
-INCLUDE_DIRECTORIES(../protodef/cpp)
+
+INCLUDE_DIRECTORIES(depends/json depends/jsonrpc-server-lib )
+INCLUDE_DIRECTORIES(depends/protodef)
+INCLUDE_DIRECTORIES(depends/protodef/cpp)
 
 add_executable( keyboxd main.cpp
                 rpc-server.cpp

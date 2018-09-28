@@ -1,0 +1,9 @@
+connect/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+CMakeFiles/
+*.o
+*.app/
+*.pro.user
+node_modules
