@@ -36,10 +36,11 @@ int main(int argc, char *argv[])
 
     boost::asio::io_context ioc{threads};
     DeviceManager *devManager = DeviceManager::getDeviceManager(&ioc);
+    #ifndef NDEBUG
     std::string wallet_path = "/tmp/keybox_wallet_server";
     LocalDevice *localDev = new LocalDevice(wallet_path, &ioc);
     devManager->addDevice(localDev);
-
+    #endif
     std::make_shared<json_rpc_server_factory>(ioc, tcp::endpoint{address, port}, &server)->run();
 
     std::vector<std::thread> v;
