@@ -44,7 +44,7 @@ add_executable( keyboxd main.cpp
                 local-device.cpp
                 usb-device.cpp
                 base64.cpp
-                ../protodef/cpp/messages.pb.cc )
+                depends/protodef/cpp/messages.pb.cc )
 TARGET_LINK_LIBRARIES(keyboxd ${Boost_LIBRARIES} ${Protobuf_LIBRARIES})
 
 target_compile_options (keyboxd PUBLIC ${LIBUSB_CFLAGS} )
