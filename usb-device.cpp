@@ -266,11 +266,7 @@ void UsbDevice::call_async(const std::string &method, const json &params, DevCal
         mBufferContent.consume(len);
         nextWriteOffset = len;
         mCb = cb;
-#if TREZOR_TEST == 0
         libusb_fill_bulk_transfer(mWriteTransfer, mDevHandle, 2, usb_write_pkg, 1024, writeComplete, this, 2000);
-#else
-        libusb_fill_interrupt_transfer(mWriteTransfer, mDevHandle, 1, usb_write_pkg, 1024, writeComplete, this, 2000);
-#endif
         errCode = libusb_submit_transfer(mWriteTransfer);
 
         if (errCode)
@@ -307,11 +303,7 @@ void UsbDevice::writehandle(enum libusb_transfer_status ec, size_t length)
         readTimeout = 2000;
     }
 
-#if TREZOR_TEST == 0
     libusb_fill_bulk_transfer(mReadTransfer, mDevHandle, 129, usb_read_pkg, 1024, readComplete, this, readTimeout);
-#else
-    libusb_fill_interrupt_transfer(mReadTransfer, mDevHandle, 129, usb_read_pkg, 1024, readComplete, this, readTimeout);
-#endif
     int errorCode;
     errorCode = libusb_submit_transfer(mReadTransfer);
 
@@ -327,11 +319,7 @@ void UsbDevice::writeAckPackge()
     json r;
     // write ack
     usb_write_pkg[0] = 4;
-#if TREZOR_TEST == 0
     libusb_fill_bulk_transfer(mWriteTransfer, mDevHandle, 2, usb_write_pkg, 1024, writeComplete, this, 2000);
-#else
-    libusb_fill_interrupt_transfer(mWriteTransfer, mDevHandle, 1, usb_write_pkg, 1024, writeComplete, this, 2000);
-#endif
     int errCode = libusb_submit_transfer(mWriteTransfer);
 
     if (errCode)
@@ -362,11 +350,7 @@ void UsbDevice::readhandle(enum libusb_transfer_status ec, size_t length)
         int len = copy2RawBuffer(bufs, usb_write_pkg + 5, 1019);
         nextWriteOffset += len;
         mBufferContent.consume(len);
-#if TREZOR_TEST == 0
         libusb_fill_bulk_transfer(mWriteTransfer, mDevHandle, 2, usb_write_pkg, 1024, writeComplete, this, 2000);
-#else
-        libusb_fill_interrupt_transfer(mWriteTransfer, mDevHandle, 1, usb_write_pkg, 1024, writeComplete, this, 2000);
-#endif
         int errCode;
         errCode = libusb_submit_transfer(mWriteTransfer);
 
@@ -497,11 +481,7 @@ void UsbDevice::readhandle(enum libusb_transfer_status ec, size_t length)
     { // read again
         std::cerr << "read timeout " << ec << "\n";
         int readTimeout = 50000;
-#if TREZOR_TEST == 0
         libusb_fill_bulk_transfer(mReadTransfer, mDevHandle, 129, usb_read_pkg, 1024, readComplete, this, readTimeout);
-#else
-        libusb_fill_interrupt_transfer(mReadTransfer, mDevHandle, 129, usb_read_pkg, 1024, readComplete, this, readTimeout);
-#endif
         int errCode;
         errCode = libusb_submit_transfer(mReadTransfer);
 

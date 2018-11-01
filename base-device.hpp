@@ -5,12 +5,6 @@
 
 using json = nlohmann::json;
 
-#define TREZOR_TEST 0
-/*
-class DeviceConnection {
-
-}*/
-
 using DevCallbackFn = std::function< void  (int32_t errCode, const std::string &errMesssage, const json & result) >;
 
 class BaseDevice {
