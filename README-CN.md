@@ -27,6 +27,9 @@ VS2017 (VS2015也应该可以，没试过)
 
 ### 编译步骤
 
+1. git clone https://github.com/KeyboxWallet/keyboxd.git
+1. cd keyboxd
+1. git submodule update --init --recursive
 1. 安装[vcpkg](https://github.com/Microsoft/vcpkg)
 1. 使用vcpkg 安装三个包  libusb protobuf boost
 1. 命令行指定环境变量 vcpkg_root 为 vcpkg的目录
