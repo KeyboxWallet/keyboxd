@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
         return 1;
     }
     std::thread uthread = std::thread(usb_func);
-    rpc_server server;
 
     auto const address = boost::asio::ip::make_address("127.0.0.1");
     auto const port = static_cast<unsigned short>(23045);
@@ -41,6 +40,7 @@ int main(int argc, char *argv[])
     LocalDevice *localDev = new LocalDevice(wallet_path, &ioc);
     devManager->addDevice(localDev);
     #endif
+    rpc_server server;
     std::make_shared<json_rpc_server_factory>(ioc, tcp::endpoint{address, port}, &server)->run();
 
     std::vector<std::thread> v;

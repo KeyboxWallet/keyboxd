@@ -1,5 +1,4 @@
 #include "rpc-server.hpp"
-#include "device-manager.hpp"
 #include "keybox-errcodes.h"
 
 struct rpc_session_state
@@ -16,6 +15,8 @@ struct rpc_server_state
 rpc_server::rpc_server() : json_rpc_context_server()
 {
     d = new rpc_server_state();
+    DeviceManager *devManager = DeviceManager::getDeviceManager(NULL);
+    devManager->registerEventListener(this);
 }
 
 
@@ -130,4 +131,23 @@ void rpc_server::genericReply(generic_json_rpc_session *session, const json &id,
     r["errmessage"] = errMessage;
     r["data"] = data;
     session->do_reply(id, r);
+}
+
+void rpc_server::deviceAdded(BaseDevice *device)
+{
+    json dev;
+    dev["devId"] = device->deviceId();
+    for(auto iter= d->sessionStates.begin(); iter != d->sessionStates.end(); iter++){
+        auto session = iter->first;        
+        session->do_notify("device_added", dev);
+    }
+}
+void rpc_server::deviceRemoved(const std::string &devId)
+{
+    json dev;
+    dev["devId"] = devId;
+    for(auto iter= d->sessionStates.begin(); iter != d->sessionStates.end(); iter++){
+        auto session = iter->first;        
+        session->do_notify("device_removed", dev);
+    }
 }

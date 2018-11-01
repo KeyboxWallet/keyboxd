@@ -36,14 +36,32 @@ std::vector<BaseDevice*> DeviceManager::deviceList()
     return r;
 }
 
+void DeviceManager::registerEventListener(DeviceEventListener *l)
+{
+    mListeners.insert(l);
+}
+
+void DeviceManager::unRegisterEventListener(DeviceEventListener *l)
+{
+    mListeners.erase(l);
+}
+
+
 void DeviceManager::addDevice(BaseDevice *d)
 {
     mDeviceMaps[d->deviceId()] =  d;
+    for( auto l : mListeners) {
+        l->deviceAdded(d);
+    }
 }
 
 void DeviceManager::rmDevice(BaseDevice *d)
 {
-    mDeviceMaps.erase(d->deviceId());
+    auto id = d->deviceId();
+    mDeviceMaps.erase(id);
+    for( auto l : mListeners) {
+        l->deviceRemoved(id);
+    }
 }
 
 void DeviceManager::enumerateUsbDevice()
@@ -104,8 +122,9 @@ void DeviceManager::enumerateUsbDevice()
 
     // delete devices disconnected
     for (auto key : keys) {
-        delete mDeviceMaps[key]; //TODO: how to delete it safely ??
-        mDeviceMaps.erase(key);
+        auto dev = mDeviceMaps[key];
+        rmDevice(dev);
+        delete dev; 
     }
 
     // add device
