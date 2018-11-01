@@ -50,7 +50,7 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
 
     DeviceManager *devManager = DeviceManager::getDeviceManager(NULL);
     if (method_name == "getServerVersion") {
-        data["version"] = "0.0.1";
+        data["version"] = "0.1.0";
         return genericReply(session, id, 0, "", data);
     }
     if (method_name == "getDeviceList") {
