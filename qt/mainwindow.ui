@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>254</width>
-    <height>325</height>
+    <width>251</width>
+    <height>96</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>STSong</family>
+    <pointsize>18</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Keybox daemon runner</string>
@@ -20,8 +26,14 @@
       <x>0</x>
       <y>0</y>
       <width>251</width>
-      <height>32</height>
+      <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Songti SC</family>
+      <pointsize>18</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>start keybox daemon</string>
@@ -33,7 +45,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>254</width>
+     <width>251</width>
      <height>22</height>
     </rect>
    </property>

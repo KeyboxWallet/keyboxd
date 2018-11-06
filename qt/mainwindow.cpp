@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(&mProcess, &QProcess::stateChanged, this, &MainWindow::stateChanged);
     connect(ui->startStopButton, &QPushButton::clicked, this, &MainWindow::startOrStopDaemon);
+    startOrStopDaemon();
 }
 
 MainWindow::~MainWindow()
@@ -34,10 +35,16 @@ void MainWindow::startOrStopDaemon()
 void MainWindow::stateChanged(QProcess::ProcessState nState)
 {
     if(nState == QProcess::NotRunning) {
-        ui->startStopButton->setText(" > start daemon ");
+        ui->startStopButton->setStyleSheet("color: green");
+        ui->startStopButton->setText("  start daemon ");
+        ui->statusBar->showMessage("daemon not running");
+        ui->statusBar->setStyleSheet("color: red");
 
     }
     if(nState == QProcess::Running) {
-        ui->startStopButton->setText(" || stop daemon");
+        ui->startStopButton->setStyleSheet("color: red");
+        ui->startStopButton->setText("  stop daemon");
+        ui->statusBar->showMessage("daemon running ok.");
+        ui->statusBar->setStyleSheet("color: green");
     }
 }
