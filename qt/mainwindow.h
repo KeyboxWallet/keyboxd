@@ -15,7 +15,8 @@ class MainWindow : public QMainWindow
 private slots:
     void startOrStopDaemon();
     void stateChanged(QProcess::ProcessState nState);
-
+    void minimizeWindow();
+    
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

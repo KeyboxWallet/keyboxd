@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtDebug>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,5 +47,12 @@ void MainWindow::stateChanged(QProcess::ProcessState nState)
         ui->startStopButton->setText("  stop daemon");
         ui->statusBar->showMessage("daemon running ok.");
         ui->statusBar->setStyleSheet("color: green");
+        auto win = this;
+        QTimer::singleShot(2000, this, &MainWindow::minimizeWindow);
     }
+}
+
+void MainWindow::minimizeWindow()
+{
+    this->setWindowState(Qt::WindowMinimized);
 }
