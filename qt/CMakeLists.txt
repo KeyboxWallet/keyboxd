@@ -32,7 +32,7 @@ set(keyboxd_ui_SRCS
     main.cpp
     icon.icns
     icon.ico
-	keyboxd_ui.rc
+    keyboxd_ui.rc
 )
 find_package(Qt5Widgets CONFIG REQUIRED)
 
