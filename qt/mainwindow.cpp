@@ -3,14 +3,16 @@
 #include "ui_mainwindow.h"
 #include <QtDebug>
 #include <QTimer>
+#include <QCoreApplication>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     mProcess(parent),
     ui(new Ui::MainWindow)
 {
+	auto appPath = QCoreApplication::applicationDirPath();
 #ifdef _WIN32
-	QIcon icon("./icon.ico");
+	QIcon icon(appPath + "/icon.ico");
 	setWindowIcon(icon);
 #endif
     ui->setupUi(this);
@@ -30,7 +32,8 @@ void MainWindow::startOrStopDaemon()
     }
     //
     else if(mProcess.state() == QProcess::NotRunning){
-        mProcess.setProgram("./keyboxd");
+		auto appPath = QCoreApplication::applicationDirPath();
+        mProcess.setProgram(appPath + "/keyboxd");
         mProcess.setWorkingDirectory(qApp->applicationDirPath());
         mProcess.start();
     }
