@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    if( mProcess.state() == QProcess::Running) {
+        mProcess.kill();
+    }
 }
 
 void MainWindow::startOrStopDaemon()
