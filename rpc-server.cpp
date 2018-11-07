@@ -147,7 +147,12 @@ void rpc_server::deviceRemoved(const std::string &devId)
     json dev;
     dev["devId"] = devId;
     for(auto iter= d->sessionStates.begin(); iter != d->sessionStates.end(); iter++){
-        auto session = iter->first;        
+        auto session = iter->first;
+        auto state = iter->second;
         session->do_notify("device_removed", dev);
+        if( state->bindDevice != NULL && state->bindDevice->deviceId() == devId){
+            d->devStates.erase(state->bindDevice);
+            state->bindDevice = NULL;
+        }
     }
 }
