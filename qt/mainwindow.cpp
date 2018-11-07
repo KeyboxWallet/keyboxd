@@ -9,7 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mProcess(parent),
     ui(new Ui::MainWindow)
 {
-
+#ifdef _WIN32
+	QIcon icon("./icon.ico");
+	setWindowIcon(icon);
+#endif
     ui->setupUi(this);
     connect(&mProcess, &QProcess::stateChanged, this, &MainWindow::stateChanged);
     connect(ui->startStopButton, &QPushButton::clicked, this, &MainWindow::startOrStopDaemon);

@@ -23,14 +23,17 @@ set( ICON_PATH "${PROJECT_SOURCE_DIR}/${ICON_NAME}" )
 
 SET_SOURCE_FILES_PROPERTIES(${ICON_PATH} PROPERTIES
                              MACOSX_PACKAGE_LOCATION Resources)
+SET_SOURCE_FILES_PROPERTIES("${PROJECT_SOURCE_DIR}/icon.ico" PROPERTIES VS_COPY_TO_OUT_DIR Always)
 
 # Populate a CMake variable with the sources
 set(keyboxd_ui_SRCS
     mainwindow.ui
     mainwindow.cpp
     main.cpp
+    icon.icns
+    icon.ico
 )
 find_package(Qt5Widgets CONFIG REQUIRED)
 
-add_executable(keyboxd_ui WIN32 MACOSX_BUNDLE ${keyboxd_ui_SRCS} ${ICON_NAME})
+add_executable(keyboxd_ui WIN32 MACOSX_BUNDLE ${keyboxd_ui_SRCS})
 target_link_libraries(keyboxd_ui Qt5::Widgets)
