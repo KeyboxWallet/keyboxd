@@ -32,5 +32,5 @@ set(keyboxd_ui_SRCS
 )
 find_package(Qt5Widgets CONFIG REQUIRED)
 
-add_executable(keyboxd_ui MACOSX_BUNDLE ${keyboxd_ui_SRCS} ${ICON_NAME})
+add_executable(keyboxd_ui WIN32 MACOSX_BUNDLE ${keyboxd_ui_SRCS} ${ICON_NAME})
 target_link_libraries(keyboxd_ui Qt5::Widgets)
