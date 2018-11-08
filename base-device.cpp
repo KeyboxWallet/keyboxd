@@ -165,6 +165,12 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
 
         req.SerializeToOstream(contentStream);
     }
+    else if (method == "getDeviceInfo")
+    {
+        messageType = MsgTypeGetModeAndVersionRequst;
+        GetModeAndVersionRequest req;
+        req.SerializeToOstream(contentStream);
+    }
     else
     {
         errCode = KEYBOX_ERROR_CLIENT_ISSUE;
@@ -251,6 +257,34 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
                 result["input-pubkey"] = base64_encode((uint8_t *)reply.input_pubkey().data(), reply.input_pubkey().size());
                 result["dev-pubkey"] = base64_encode((uint8_t *)reply.dev_pubkey().data(), reply.dev_pubkey().size());
                 result["data"] = base64_encode((uint8_t *)reply.result().data(), reply.result().size());
+                //return cb(0, "multiplyOK", r);
+            }
+            else
+            {
+                errCode = KEYBOX_ERROR_SERVER_ISSUE;
+                errMessage = "parse data from wallet error";
+            }
+        }
+        else
+        {
+            errCode = KEYBOX_ERROR_SERVER_ISSUE;
+            errMessage = "unexpected reply from wallet";
+        }
+    }
+    else if (requestMethod == "getDeviceInfo")
+    {
+        // messageType = MsgTypeGetModeAndVersionRequst;
+        if (messageType == MsgTypeGetModeAndVersionReply )
+        {
+
+            GetModeAndVersionReply reply;
+            if (reply.ParseFromIstream(replyContentStream))
+            {
+                result["ver"] = 1;
+                result["type"] = "device-info";
+                result["device-serial-no"] = reply.deviceserialno();
+                result["firmware-version"] = reply.firmwareversion();
+                result["mode"] = reply.mode();
                 //return cb(0, "multiplyOK", r);
             }
             else

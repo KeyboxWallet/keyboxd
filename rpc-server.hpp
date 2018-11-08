@@ -5,7 +5,7 @@
 #ifndef KEYBOXD_RPC_SERVER_IMPLEMENTATION
 #define KEYBOXD_RPC_SERVER_IMPLEMENTATION
 
-#define KEYBOXD_SERVER_VERSION "0.2.0"
+#define KEYBOXD_SERVER_VERSION "0.3.0"
 
 struct rpc_server_state;
 class rpc_server : public json_rpc_context_server, public DeviceEventListener
