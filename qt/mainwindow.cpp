@@ -46,15 +46,15 @@ void MainWindow::stateChanged(QProcess::ProcessState nState)
 {
     if(nState == QProcess::NotRunning) {
         ui->startStopButton->setStyleSheet("color: green");
-        ui->startStopButton->setText("  start daemon ");
-        ui->statusBar->showMessage("daemon not running");
+        ui->startStopButton->setText(tr("start daemon"));
+        ui->statusBar->showMessage(tr("daemon not running"));
         ui->statusBar->setStyleSheet("color: red");
 
     }
     if(nState == QProcess::Running) {
         ui->startStopButton->setStyleSheet("color: red");
-        ui->startStopButton->setText("  stop daemon");
-        ui->statusBar->showMessage("daemon running ok.");
+        ui->startStopButton->setText(tr("stop daemon"));
+        ui->statusBar->showMessage(tr("daemon running ok."));
         ui->statusBar->setStyleSheet("color: green");
         auto win = this;
         QTimer::singleShot(2000, this, &MainWindow::minimizeWindow);
