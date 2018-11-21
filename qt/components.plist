@@ -11,39 +11,6 @@
 		<true/>
 		<key>BundleOverwriteAction</key>
 		<string>upgrade</string>
-		<key>ChildBundles</key>
-		<array>
-			<dict>
-				<key>BundleOverwriteAction</key>
-				<string></string>
-				<key>RootRelativeBundlePath</key>
-				<string>Applications/keyboxd_ui.app/Contents/Frameworks/QtPrintSupport.framework</string>
-			</dict>
-			<dict>
-				<key>BundleOverwriteAction</key>
-				<string></string>
-				<key>RootRelativeBundlePath</key>
-				<string>Applications/keyboxd_ui.app/Contents/Frameworks/QtGui.framework</string>
-			</dict>
-			<dict>
-				<key>BundleOverwriteAction</key>
-				<string></string>
-				<key>RootRelativeBundlePath</key>
-				<string>Applications/keyboxd_ui.app/Contents/Frameworks/QtCore.framework</string>
-			</dict>
-			<dict>
-				<key>BundleOverwriteAction</key>
-				<string></string>
-				<key>RootRelativeBundlePath</key>
-				<string>Applications/keyboxd_ui.app/Contents/Frameworks/QtWidgets.framework</string>
-			</dict>
-			<dict>
-				<key>BundleOverwriteAction</key>
-				<string></string>
-				<key>RootRelativeBundlePath</key>
-				<string>Applications/keyboxd_ui.app/Contents/Frameworks/QtSvg.framework</string>
-			</dict>
-		</array>
 		<key>RootRelativeBundlePath</key>
 		<string>Applications/keyboxd_ui.app</string>
 	</dict>

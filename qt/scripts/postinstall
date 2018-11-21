@@ -1,4 +1,5 @@
 #!/bin/sh
+sudo_user=`basename $HOME`
+USER_WRAPPER="sudo -u $sudo_user"
 
-set -e
-/bin/launchctl load "/Library/LaunchAgents/org.keyboxwallet.daemon.plist"
+$USER_WRAPPER /bin/launchctl load /Library/LaunchAgents/org.keyboxwallet.daemon.plist

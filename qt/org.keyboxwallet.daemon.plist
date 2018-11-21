@@ -9,6 +9,11 @@
     <string>/Applications/keyboxd_ui.app/Contents/MacOS/keyboxd</string>
   </array>
   <key>RunAtLoad</key><true/>
-  <key>KeepAlive</key><true/>
+  <key>KeepAlive</key><false/>
+  <key>MachServices</key>
+  <dict>
+     <key>org.keyboxwallet.daemon</key>
+     <true/>
+  </dict>
 </dict>
 </plist>

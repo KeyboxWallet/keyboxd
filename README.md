@@ -1,3 +1,19 @@
+# Introduction
+
+[keybox](https://keybox.magicw.net) is a hardware wallet for cryptocurrencies. It is like a modified version of [trezor](https://trezor.io), but with two main differences:
+
++ A full touch screen and keyboard on keybox, but not on trezor;
++ Simplified hardware functionalities: it just make signatures and don't know 'high level meaning', i.e. transaction .
+
+keyboxd is a bridge between software wallet and hardware wallet.
+
+
+````
+    hardware wallet <=== usb ====> keyboxd   <==== json rpc ====> software wallet
+````
+
+you can check 
+
 # Build Process
 
 

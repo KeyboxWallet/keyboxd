@@ -2,8 +2,10 @@
 <installer-gui-script minSpecVersion="1">
     <title>keybox daemon</title>
     <organization>org.keyboxwallet</organization>
-    <domains enable_localSystem="true"/>
-    <options customize="never" require-scripts="true" rootVolumeOnly="true" />
+    <domains enable_localSystem="true" 
+             enable_anywhere="false" 
+             enable_currentUserHome="false" />
+    <options customize="true" require-scripts="true" rootVolumeOnly="false"/>
     <!-- Define documents displayed at various steps -->
     <!--
     <welcome    file="welcome.html"    mime-type="text/html" />
@@ -12,8 +14,7 @@
     -->
     <!-- List all component packages -->
     <pkg-ref id="org.keyboxwallet.daemon"
-             version="0.3.0"
-             auth="root">output.pkg</pkg-ref>
+             >out.pkg</pkg-ref>
     <!-- List them again here. They can now be organized
          as a hierarchy if you want. -->
     <choices-outline>
