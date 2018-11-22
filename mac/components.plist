@@ -12,7 +12,7 @@
 		<key>BundleOverwriteAction</key>
 		<string>upgrade</string>
 		<key>RootRelativeBundlePath</key>
-		<string>Applications/keyboxd.app</string>
+		<string>/usr/local/keyboxd</string>
 	</dict>
 </array>
 </plist>

@@ -6,7 +6,7 @@
   <string>org.keyboxwallet.daemon</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/Applications/keyboxd.app/Contents/MacOS/keyboxd</string>
+    <string>/usr/local/keyboxd/Contents/MacOS/keyboxd</string>
   </array>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><false/>
