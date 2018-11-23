@@ -38,6 +38,23 @@ you can check [simple-daemon-client](https://github.com/KeyboxWallet/simple-daem
 }
 ````
 
+## signature format
+
+
+````
+{
+  "ver":1,
+  "curve": "secp256k1",
+  "input-hash": "<base64encoded of hash data>",
+  "pubkey": "<base64enocded of pubkey>",
+  "data": { 
+    "R": "<base64encoded of R>"
+    "S": "<base64encoded of S>",
+    "recovery-param": 0 | 1 | 2 | 3 
+  }
+}
+````
+
 the 'big endian public key buffer' is a 'XY' point without 0x04 prefix. 
 
 ## path format
@@ -80,6 +97,25 @@ bip32 is the only supported prefix now.
 ````
 
 
+
+## RPC List
+
+
+
++ returns ReqResul when call server from client
++ returns void when notification
+
+| function    |   rpc spec       |   extra info  |
+|------|------------|----------------------------------|
+| Get keybox Daemon version | ReqResult getServerVersion()         |                           |
+| list connected devices             | ReqResult getDeviceList()           |   |
+| connect Device             | ReqResult connectDevice(string devId)     |  
+| disconnect Device             | ReqResult disconnectDevice(string devId) |
+| get public key for a path | ReqResult getPublicKeyFromPath(string path) | should after onnect, device should be unlocked. path is somthing like bip32/m/44'/28'/1'/0'/0  |
+| request signature            |  ReqResult signReq(SignReq req) |  |
+| request multiply     |  ReqResult multiplyReq(MultiplyReq req) |            |
+| device disconnected notify            |  void deviceDisconnected(string devId) |        |
+| device connected notify           |  void deviceConnected(string devId)     |        | 
 
 # Build Process
 
