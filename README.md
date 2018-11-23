@@ -12,7 +12,74 @@ keyboxd is a bridge between software wallet and hardware wallet.
     hardware wallet <=== usb ====> keyboxd   <==== json rpc ====> software wallet
 ````
 
-you can check 
+
+
+# json rpc api formats
+
+you can check [simple-daemon-client](https://github.com/KeyboxWallet/simple-daemon-client) for examples.
+
+## generic rpc reply 
+
+````
+{ 
+   "errcode": 0 | 1 | ... ,
+   "errmessage": "error message",
+   "data": <for diffent api, get different reply>
+}
+````
+
+## public key 
+
+````
+{
+   "ver":1
+   "curve":"secp256k1",
+   "data":"<base64encoded of big endian public key buffer>"
+}
+````
+
+the 'big endian public key buffer' is a 'XY' point without 0x04 prefix. 
+
+## path format
+
+````
+ "bip32/m/44'/1'/1'/1/1"
+````
+
+bip32 is the only supported prefix now.
+
+
+## hash format
+
+````
+"<base64 encoded of hash>"
+````
+
+## Signature request
+
+````
+{
+   "ver": 1,
+   "path": "path String defined above",
+   "hash": "hash String defined above",
+   "options": {
+     "rfc6979": true | false,
+     "graphene_canonize": true | false
+   }
+} 
+````
+
+## Multiply request
+
+````
+{
+   "ver": 1,
+   "path": "path String defined above",
+   "pubkey": "<base64enocded of pubkey>",
+} 
+````
+
+
 
 # Build Process
 
