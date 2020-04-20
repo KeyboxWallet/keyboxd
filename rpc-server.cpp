@@ -31,13 +31,14 @@ void rpc_server::session_added(generic_json_rpc_session *session)
 void rpc_server::session_removed(generic_json_rpc_session *session)
 {
     rpc_session_state *state = d->sessionStates[session];
+    d->sessionStates.erase(session);
     if (state->bindDevice)
     {
-        state->bindDevice->disconnect();
+        auto bindDev = state->bindDevice;
         d->devStates.erase(state->bindDevice);
         state->bindDevice = NULL;
+        bindDev->disconnect();
     }
-    d->sessionStates.erase(session);
 }
 
 void rpc_server::call(generic_json_rpc_session *session, const json &id, const std::string method_name, const json &params)
