@@ -1,6 +1,5 @@
 #include "rpc-server.hpp"
 #include "keybox-errcodes.h"
-
 struct rpc_session_state
 {
     BaseDevice *bindDevice;
@@ -30,7 +29,7 @@ void rpc_server::session_added(generic_json_rpc_session *session)
 
 void rpc_server::session_removed(generic_json_rpc_session *session)
 {
-    rpc_session_state *state = d->sessionStates[session];
+    rpc_session_state *state = d->sessionStates.at(session);
     d->sessionStates.erase(session);
     if (state->bindDevice)
     {
@@ -44,7 +43,13 @@ void rpc_server::session_removed(generic_json_rpc_session *session)
 void rpc_server::call(generic_json_rpc_session *session, const json &id, const std::string method_name, const json &params)
 {
     json data;
-    rpc_session_state *state = d->sessionStates[session];
+    rpc_session_state *state = nullptr;
+    try{
+        state = d->sessionStates.at(session);
+    }
+    catch(std::exception e){
+
+    }
     if (!state) {
         return genericReply(session, id, KEYBOX_ERROR_SERVER_ISSUE, "internal error: no state", data);
     }
@@ -75,13 +80,13 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
         if (dev)
         {
             // 检查一下该设备是否被占用
-            if( d->devStates[dev] ){
+            if( d->devStates.find(dev) != d->devStates.end() ){
                 return genericReply(session, id, KEYBOX_ERROR_DEVICE_BUSY, "device already used by another client", data);
             }
 
             bool result = dev->connect();
             if( result ) {
-                d->sessionStates[session]->bindDevice = dev;
+                d->sessionStates.at(session)->bindDevice = dev;
                 d->devStates[dev] = session;
                 return genericReply(session, id, 0, "connect ok", data);
             }
@@ -113,7 +118,13 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
         }
         auto d_ = this->d;
         state->bindDevice->call_async(method_name, params, [session, id, d_](int32_t errCode, const std::string &errMessage, const json &result){
-            rpc_session_state *state = d_->sessionStates[session];
+            rpc_session_state *state = nullptr;
+            try{
+                state = d_->sessionStates.at(session);
+            }
+            catch(std::exception e){
+
+            }
             if ( state ) {
                 json r;
                 r["errcode"] = errCode;
@@ -139,7 +150,7 @@ void rpc_server::deviceAdded(BaseDevice *device)
     json dev;
     dev["devId"] = device->deviceId();
     for(auto iter= d->sessionStates.begin(); iter != d->sessionStates.end(); iter++){
-        auto session = iter->first;        
+        auto session = iter->first;
         session->do_notify("device_added", dev);
     }
 }
