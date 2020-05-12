@@ -171,6 +171,15 @@ void LocalDevice::readHeaderHandle(DevCallbackFn cb, boost::system::error_code e
             return cb(KEYBOX_ERROR_SERVER_ISSUE, "internal protocol error", r);
         }
     }
+    else   if (mCurrentMethod == "getExtendedPubkeyFromPath")
+    {
+
+        if (type != MsgTypeEccGetExtendedPubkeyReply && type != MsgTypeRequestRejected)
+        {
+            mRpcStatus = IDLE;
+            return cb(KEYBOX_ERROR_SERVER_ISSUE, "internal protocol error", r);
+        }
+    }
     else if( mCurrentMethod == "signReq") {
         if (type != MsgTypeEccSignResult && type != MsgTypeRequestRejected)
         {

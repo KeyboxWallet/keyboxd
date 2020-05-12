@@ -112,7 +112,11 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
         return genericReply(session, id, 0, "disconnect ok", data);
     }
 
-    if (method_name == "getPublicKeyFromPath" || method_name == "signReq" || method_name == "multiplyReq" || method_name == "getDeviceInfo") {
+    if (method_name == "getPublicKeyFromPath"
+        || method_name == "getExtendedPubkeyFromPath"
+        || method_name == "signReq"
+        || method_name == "multiplyReq"
+        || method_name == "getDeviceInfo") {
         if( !state->bindDevice ) {
             return genericReply(session, id, KEYBOX_ERROR_CLIENT_ISSUE, "you must connect dev first", data);
         }

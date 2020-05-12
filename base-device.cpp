@@ -29,6 +29,22 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
 
         req.SerializeToOstream(contentStream);
     }
+    else if (method == "getExtendedPubkeyFromPath")
+    {
+        messageType = MsgTypeEccGetExtendedPubkeyRequest;
+        EccGetExtendedPublicKeyRequest req;
+        if (!params.is_string())
+        {
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "you must specify string param to call this function";
+            return;
+        }
+        std::string path = params;
+
+        req.set_hdpath(path);
+
+        req.SerializeToOstream(contentStream);
+    }
     else if (method == "signReq")
     {
         messageType = MsgTypeEccSignRequest;
@@ -200,6 +216,33 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
                 result["type"] = "ecc-pubkey";
                 result["curve"] = "secp256k1";
                 result["data"] = base64_encode((uint8_t *)rep.pubkey().data(), rep.pubkey().size());
+                // return cb(0, "getOK", r);
+            }
+            else
+            {
+                errCode = KEYBOX_ERROR_SERVER_ISSUE;
+                errMessage = "parse data from wallet error";
+            }
+        }
+        else
+        {
+            errCode = KEYBOX_ERROR_SERVER_ISSUE;
+            errMessage = "unexpected reply from wallet";
+        }
+    }
+    else if (requestMethod == "getExtendedPubkeyFromPath")
+    {
+
+        if (messageType == MsgTypeEccGetExtendedPubkeyReply)
+        {
+            EccGetExtendedPublicKeyReply rep;
+            if (rep.ParseFromIstream(replyContentStream))
+            {
+                result["ver"] = 1; // rep.hdpath();
+                result["type"] = "bip32-extended-pubkey";
+                result["curve"] = "secp256k1";
+                result["pubkey"] = base64_encode((uint8_t *)rep.pubkey().data(), rep.pubkey().size());
+                result["chaincode"] = base64_encode((uint8_t*)rep.chaincode().data(), rep.chaincode().size());
                 // return cb(0, "getOK", r);
             }
             else
