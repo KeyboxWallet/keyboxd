@@ -328,6 +328,7 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
                 result["device-serial-no"] = reply.deviceserialno();
                 result["firmware-version"] = reply.firmwareversion();
                 result["mode"] = reply.mode();
+                result["isLocked"] = reply.islocked();
                 //return cb(0, "multiplyOK", r);
             }
             else
