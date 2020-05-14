@@ -38,7 +38,7 @@ endif()
 
 INCLUDE_DIRECTORIES(depends/json depends/jsonrpc-server-lib )
 INCLUDE_DIRECTORIES(depends/protodef)
-INCLUDE_DIRECTORIES(depends/protodef/cpp)
+INCLUDE_DIRECTORIES(depends/protodef/cpp/${Protobuf_VERSION})
 
 add_executable( keyboxd main.cpp
                 rpc-server.cpp
@@ -47,7 +47,7 @@ add_executable( keyboxd main.cpp
                 local-device.cpp
                 usb-device.cpp
                 base64.cpp
-                depends/protodef/cpp/messages.pb.cc )
+                depends/protodef/cpp/${Protobuf_VERSION}/messages.pb.cc )
 TARGET_LINK_LIBRARIES(keyboxd ${Boost_LIBRARIES} ${Protobuf_LIBRARIES})
 
 target_compile_options (keyboxd PUBLIC ${LIBUSB_CFLAGS} )
