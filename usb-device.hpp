@@ -22,6 +22,7 @@ public:
 
     void writehandle( enum libusb_transfer_status ec, size_t length); // callback from usb only
     void readhandle( enum libusb_transfer_status ec, size_t length); // callback from usb only
+
 private:
     libusb_device * mDevice;
     libusb_device_handle *mDevHandle;
@@ -54,7 +55,8 @@ private:
     DevCallbackFn mCb;
 
     void writeAckPackge();    
-
+    void resetDevice();
+    bool mResetFlag;
 };
 
 #endif

@@ -47,6 +47,7 @@ UsbDevice::UsbDevice(libusb_device *device, boost::asio::io_context *ioc)
     mWriteTransfer = libusb_alloc_transfer(0);
     mReadTransfer = libusb_alloc_transfer(0);
     mDisconnectedFlag = false;
+    mResetFlag = false;
 }
 
 bool UsbDevice::maybeDisconnected()
@@ -191,7 +192,7 @@ extern "C"
     #ifndef NDEBUG
         char buff[32*2 + 1];
         myToHex(transfer->buffer, 32, buff);
-        std::cout << "write handle "
+        std::cerr << "write handle "
             << transfer->status
             << " first 32 bytes: \n"
             << (char*)buff << "\n";
@@ -205,7 +206,7 @@ extern "C"
    #ifndef NDEBUG
         char buff[32*2 + 1];
         myToHex(transfer->buffer, 32, buff);
-        std::cout << "read handle "
+        std::cerr << "read handle "
             << transfer->status
             << " first 32 bytes: \n"
             << (char*)buff << "\n";
@@ -224,6 +225,10 @@ void UsbDevice::call_async(const std::string &method, const json &params, DevCal
     if (mRpcStatus != IDLE)
     {
         return cb(KEYBOX_ERROR_CLIENT_ISSUE, "another call in progress.", r);
+    }
+    if( mResetFlag ){
+        //return cb()
+        return;
     }
     // write to socket
 
@@ -284,12 +289,20 @@ void UsbDevice::call_async(const std::string &method, const json &params, DevCal
 void UsbDevice::writehandle(enum libusb_transfer_status ec, size_t length)
 {
     json r;
+    if( mResetFlag ){
+        if (ec != LIBUSB_TRANSFER_COMPLETED){
+            std::cerr << "write error " << libusb_error_name(ec) << "\n";
+            mResetFlag = false;
+            return;
+        }
+    }
     if (ec != LIBUSB_TRANSFER_COMPLETED)
     {
         mRpcStatus = IDLE;
 		std::cerr << "write error " << libusb_error_name(ec) << "\n";
         mCb(KEYBOX_ERROR_SERVER_ISSUE, "io: write error", r);
         mDisconnectedFlag = true;
+        resetDevice();
         /*
         if (ec == LIBUSB_TRANSFER_NO_DEVICE)
         {
@@ -297,7 +310,14 @@ void UsbDevice::writehandle(enum libusb_transfer_status ec, size_t length)
         }*/
         return;
     }
-    int readTimeout = 50000; // 50s
+    int readTimeout;
+    if( !mResetFlag && mCurrentMethod == "signReq"){ // methods needs to be confirmed by user.
+        readTimeout = 50000; // 50s
+    }
+    else {
+        readTimeout = 5000; // 5s
+    }
+
     if (mBufferContent.size())
     { // more pkg to send
         readTimeout = 2000;
@@ -309,8 +329,13 @@ void UsbDevice::writehandle(enum libusb_transfer_status ec, size_t length)
 
     if (errorCode)
     {
-        mRpcStatus = IDLE;
-        return mCb(KEYBOX_ERROR_SERVER_ISSUE, "io error", r);
+        if( mResetFlag){
+            mResetFlag = false;
+        }
+        else{
+            mRpcStatus = IDLE;
+            return mCb(KEYBOX_ERROR_SERVER_ISSUE, "io error,submit write", r);
+        }
     }
 }
 
@@ -332,6 +357,10 @@ void UsbDevice::writeAckPackge()
 void UsbDevice::readhandle(enum libusb_transfer_status ec, size_t length)
 {
     json r;
+    if( mResetFlag ){
+        mResetFlag = false;
+        return;
+    }
     if (mBufferContent.size())
     { // more pkg to send, write.
 
@@ -480,15 +509,23 @@ void UsbDevice::readhandle(enum libusb_transfer_status ec, size_t length)
     else if (ec == LIBUSB_TRANSFER_TIMED_OUT)
     { // read again
         std::cerr << "read timeout " << ec << "\n";
-        int readTimeout = 50000;
-        libusb_fill_bulk_transfer(mReadTransfer, mDevHandle, 129, usb_read_pkg, 1024, readComplete, this, readTimeout);
-        int errCode;
-        errCode = libusb_submit_transfer(mReadTransfer);
+        if( mCurrentMethod == "signReq"){
+            int readTimeout = 50000;
+            libusb_fill_bulk_transfer(mReadTransfer, mDevHandle, 129, usb_read_pkg, 1024, readComplete, this, readTimeout);
+            int errCode;
+            errCode = libusb_submit_transfer(mReadTransfer);
 
-        if (errCode)
-        {
+            if (errCode)
+            {
+                mRpcStatus = IDLE;
+                return mCb(KEYBOX_ERROR_SERVER_ISSUE, "io error, submit to read", r);
+            }
+        }
+        else{
             mRpcStatus = IDLE;
-            return mCb(KEYBOX_ERROR_SERVER_ISSUE, "io error, submit to read", r);
+            mDisconnectedFlag = true;
+            mCb(KEYBOX_ERROR_SERVER_ISSUE, "io error: read timeout", r);
+            resetDevice();
         }
     }
     else
@@ -496,5 +533,22 @@ void UsbDevice::readhandle(enum libusb_transfer_status ec, size_t length)
         mRpcStatus = IDLE;
         mDisconnectedFlag = true;
         mCb(KEYBOX_ERROR_SERVER_ISSUE, "io error: read", r);
+        resetDevice();
+    }
+}
+
+void UsbDevice::resetDevice()
+{
+    memset(usb_write_pkg, 0, 1024);
+    usb_write_pkg[0] = 5;
+    mResetFlag = true;
+    std::cerr << "resetting device " << "\n";
+    libusb_fill_bulk_transfer(mWriteTransfer, mDevHandle, 2, usb_write_pkg, 1024, writeComplete, this, 2000);
+    int errCode;
+    errCode = libusb_submit_transfer(mWriteTransfer);
+    if( errCode ){
+        std::cerr << "error write " << errCode << "\n";
+        mResetFlag = false;
+        return;
     }
 }
