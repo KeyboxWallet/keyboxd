@@ -51,5 +51,5 @@ add_executable( keyboxd main.cpp
 TARGET_LINK_LIBRARIES(keyboxd ${Boost_LIBRARIES} ${Protobuf_LIBRARIES})
 
 target_compile_options (keyboxd PUBLIC ${LIBUSB_CFLAGS} )
-target_link_libraries (keyboxd debug ${LIBUSB_LIBRARIES} ${LIBUSB_LIBRARIES_DEBUG})
-TARGET_LINK_LIBRARIES(keyboxd optimized  ${LIBUSB_LIBRARIES} ${LIBUSB_LIBRARIES_REL})
+target_link_libraries (keyboxd debug ${LIBUSB_LDFLAGS} ${LIBUSB_LIBRARIES} ${LIBUSB_LIBRARIES_DEBUG})
+TARGET_LINK_LIBRARIES(keyboxd optimized ${LIBUSB_LDFLAGS}  ${LIBUSB_LIBRARIES} ${LIBUSB_LIBRARIES_REL})
