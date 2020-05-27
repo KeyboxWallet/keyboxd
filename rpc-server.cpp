@@ -116,7 +116,9 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
         || method_name == "getExtendedPubkeyFromPath"
         || method_name == "signReq"
         || method_name == "multiplyReq"
-        || method_name == "getDeviceInfo") {
+        || method_name == "getDeviceInfo"
+        || method_name == "getWalletIdentifier"
+        ) {
         if( !state->bindDevice ) {
             return genericReply(session, id, KEYBOX_ERROR_CLIENT_ISSUE, "you must connect dev first", data);
         }
@@ -137,6 +139,13 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
                 session->do_reply(id, r);
             }
         });
+    }
+    else{
+        json r;
+        r["errcode"] = KEYBOX_ERROR_CLIENT_ISSUE;
+        r["errmessage"] = "unsupported message";
+        r["data"] = json::object();
+        session->do_reply(id, r);
     }
 }
 

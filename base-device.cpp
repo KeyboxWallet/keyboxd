@@ -187,6 +187,12 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
         GetModeAndVersionRequest req;
         req.SerializeToOstream(contentStream);
     }
+    else if (method == "getWalletIdentifier")
+    {
+        messageType = MsgTypeGetWalletIdentifierRequest;
+        GetWalletIdentifierRequest req;
+        req.SerializeToOstream(contentStream);
+    }
     else
     {
         errCode = KEYBOX_ERROR_CLIENT_ISSUE;
@@ -253,6 +259,24 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
         }
         else
         {
+            errCode = KEYBOX_ERROR_SERVER_ISSUE;
+            errMessage = "unexpected reply from wallet";
+        }
+    }
+    else if (requestMethod == "getWalletIdentifier"){
+        if(messageType == MsgTypeGetWalletIdentifierReply)
+        {
+            GetWalletIdentifierReply rep;
+            if (rep.ParseFromIstream(replyContentStream))
+            {
+                result["bip32MasterKeyId"] = base64_encode((uint8_t*)rep.bip32masterkeyid().data(), rep.bip32masterkeyid().size());
+            }
+            else{
+                errCode = KEYBOX_ERROR_SERVER_ISSUE;
+                errMessage = "parse data from wallet error";
+            }
+        }
+        else{
             errCode = KEYBOX_ERROR_SERVER_ISSUE;
             errMessage = "unexpected reply from wallet";
         }
