@@ -38,16 +38,28 @@ endif()
 
 INCLUDE_DIRECTORIES(depends/json depends/jsonrpc-server-lib )
 INCLUDE_DIRECTORIES(depends/protodef)
-INCLUDE_DIRECTORIES(depends/protodef/cpp/${Protobuf_VERSION})
+
+set(PROTOSRCS depends/protodef/messages.pb.cc)
+set(PROTOHDRS depends/protodef/messages.pb.h)
+message(STATUS "protobuf sources: ${PROTOSRCS}")
+set_source_files_properties(${PROTOSRCS} ${PROTOHDRS} PROPERTIES generated TRUE)
+
+add_custom_command(
+    OUTPUT ${PROTOSRCS} ${PROTOHDRS}
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE}
+    ARGS --cpp_out . depends/protodef/messages.proto
+)
+
 
 add_executable( keyboxd main.cpp
+                ${PROTOSRCS}
                 rpc-server.cpp
                 device-manager.cpp
                 base-device.cpp
                 local-device.cpp
                 usb-device.cpp
                 base64.cpp
-                depends/protodef/cpp/${Protobuf_VERSION}/messages.pb.cc )
+                 )
 TARGET_LINK_LIBRARIES(keyboxd ${Boost_LIBRARIES} ${Protobuf_LIBRARIES})
 
 target_compile_options (keyboxd PUBLIC ${LIBUSB_CFLAGS} )
