@@ -36,18 +36,22 @@ elseif (WIN32)
  SET(LIBUSB_LIBRARIES_REL ${LIBUSB_LIBRARIES_DIR_REL}/lib/libusb-1.0.lib)
 endif()
 
+SET(PROTO_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/protocpp)
+
 INCLUDE_DIRECTORIES(depends/json depends/jsonrpc-server-lib )
 INCLUDE_DIRECTORIES(depends/protodef)
+INCLUDE_DIRECTORIES(${PROTO_GEN_DIR})
 
-set(PROTOSRCS depends/protodef/messages.pb.cc)
-set(PROTOHDRS depends/protodef/messages.pb.h)
+
+set(PROTOSRCS ${PROTO_GEN_DIR}/messages.pb.cc)
+set(PROTOHDRS ${PROTO_GEN_DIR}/messages.pb.h)
 message(STATUS "protobuf sources: ${PROTOSRCS}")
 set_source_files_properties(${PROTOSRCS} ${PROTOHDRS} PROPERTIES generated TRUE)
 
 add_custom_command(
     OUTPUT ${PROTOSRCS} ${PROTOHDRS}
-    COMMAND ${Protobuf_PROTOC_EXECUTABLE}
-    ARGS --cpp_out . depends/protodef/messages.proto
+    COMMAND mkdir -p ${PROTO_GEN_DIR}
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE} --cpp_out ${PROTO_GEN_DIR} -Idepends/protodef messages.proto
 )
 
 
