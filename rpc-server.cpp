@@ -118,6 +118,7 @@ void rpc_server::call(generic_json_rpc_session *session, const json &id, const s
         || method_name == "multiplyReq"
         || method_name == "getDeviceInfo"
         || method_name == "getWalletIdentifier"
+        || method_name == "bitcoinSignReq"
         ) {
         if( !state->bindDevice ) {
             return genericReply(session, id, KEYBOX_ERROR_CLIENT_ISSUE, "you must connect dev first", data);

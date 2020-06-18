@@ -193,6 +193,32 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
         GetWalletIdentifierRequest req;
         req.SerializeToOstream(contentStream);
     }
+    else if (method == "bitcoinSignReq")
+    {
+        messageType = MsgTypeBitcoinSignRequest;
+        BitcoinSignRequest req;
+        if( !params["psbt"].is_string()){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "you must specify psbt(base64 encoded string) in this request";
+            return;
+
+        }
+        std::string psbt = params["psbt"];
+        std::string raw_psbt;
+        if(!base64_decode(psbt, raw_psbt)){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "the base64 psbt is invalid";
+            return;
+        }
+        req.set_psbt(raw_psbt);
+        if( !params["testnet"].is_boolean()){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "you must specify testnet flag in this request";
+            return;
+        }
+        req.set_testnet(params["testnet"]);
+        req.SerializeToOstream(contentStream);
+    }
     else
     {
         errCode = KEYBOX_ERROR_CLIENT_ISSUE;
@@ -297,6 +323,31 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
                 result["data"]["R"] = base64_encode((uint8_t *)reply.r().data(), reply.r().size());
                 result["data"]["S"] = base64_encode((uint8_t *)reply.s().data(), reply.s().size());
                 result["data"]["recover_param"] = reply.recover_param();
+                //return cb(0, "signOK", r);
+            }
+            else
+            {
+                errCode = KEYBOX_ERROR_SERVER_ISSUE;
+                errMessage = "parse data from wallet error";
+            }
+        }
+        else
+        {
+            errCode = KEYBOX_ERROR_SERVER_ISSUE;
+            errMessage = "unexpected reply from wallet";
+        }
+    }
+    else if (requestMethod == "bitcoinSignReq")
+    {
+        if (messageType == MsgTypeBitcoinSignResult)
+        {
+            BitcoinSignResult reply;
+            if (reply.ParseFromIstream(replyContentStream))
+            {
+                result["ver"] = 1;
+                result["type"] = "psbt";
+                result["data"] = json::object();
+                result["data"]["psbt"] = base64_encode((uint8_t *)reply.psbt().data(), reply.psbt().size());
                 //return cb(0, "signOK", r);
             }
             else
