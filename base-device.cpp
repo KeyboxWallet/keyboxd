@@ -346,8 +346,7 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
             {
                 result["ver"] = 1;
                 result["type"] = "psbt";
-                result["data"] = json::object();
-                result["data"]["psbt"] = base64_encode((uint8_t *)reply.psbt().data(), reply.psbt().size());
+                result["psbt"] = base64_encode((uint8_t *)reply.psbt().data(), reply.psbt().size());
                 //return cb(0, "signOK", r);
             }
             else
