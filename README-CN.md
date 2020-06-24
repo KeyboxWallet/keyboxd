@@ -7,23 +7,23 @@
 
 + 编译器 GCC / CLANG 
 + cmake >= 3.1
-+ Boost 1.67
-+ protobuf 3.6.0 (C++)
-+ libusb 1.0.21 + 
++ Boost >= 1.71
++ protobuf >= 3.6.0 (C++)
++ libusb >= 1.0.21
 
 ### 编译步骤
 
 1. git clone https://github.com/KeyboxWallet/keyboxd.git
 1. cd keyboxd
 1. git submodule update --init --recursive
-1. cmake .
+1. cmake . # 如果是手动安装的 boost， 使用 cmake -DBOOST_ROOT=$BOOST_INSTALL_DIR .
 1. make
 
 ## Windows
 
 ### 环境要求
 
-VS2017 (VS2015也应该可以，没试过)
+VS2017/VS2019 (VS2015也应该可以，没试过)
 
 ### 编译步骤
 
@@ -34,4 +34,4 @@ VS2017 (VS2015也应该可以，没试过)
 1. 使用vcpkg 安装三个包  libusb protobuf boost
 1. 命令行指定环境变量 vcpkg_root 为 vcpkg的目录
 1. cmake -DCMAKE_TOOLCHAIN_FILE=D:\src\vcpkg\scripts\buildsystems\vcpkg.cmake .  （替换为你的目录!!)
-1. 打开VS2017编译项目
+1. 打开VS编译项目

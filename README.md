@@ -1,9 +1,9 @@
 # Introduction
 
-[keybox](https://keybox.magicw.net) is a hardware wallet for cryptocurrencies. It is like a modified version of [trezor](https://trezor.io), but with two main differences:
+[keybox](https://keybox.magicw.net) is a hardware wallet for cryptocurrencies. It is like a modified version of [trezor](https://trezor.io), but with one(~~two~~) main differences:
 
 + A full touch screen and keyboard on keybox, but not on trezor;
-+ Simplified hardware functionalities: it just make signatures and don't know 'high level meaning', i.e. transaction .
++ ~~Simplified hardware functionalities: it just make signatures and don't know 'high level meaning', i.e. transaction .~~
 
 keyboxd is a bridge between software wallet and hardware wallet.
 
@@ -111,7 +111,10 @@ bip32 is the only supported prefix now.
 | list connected devices             | ReqResult getDeviceList()           |   |
 | connect Device             | ReqResult connectDevice(string devId)     |  
 | disconnect Device             | ReqResult disconnectDevice(string devId) |
-| get public key for a path | ReqResult getPublicKeyFromPath(string path) | should after onnect, device should be unlocked. path is somthing like bip32/m/44'/28'/1'/0'/0  |
+| get Device Information    | ReqResult getDeviceInfo() |  |
+| get wallet Identifier     | Reqresult getWalletIdentifier()       | fetch the fingerprint of the wallet data                |
+| get public key for a path | ReqResult getPublicKeyFromPath(string path) | should after connect, device should be unlocked. path is somthing like bip32/m/44'/28'/1'/0'/0  |
+| get extended public key for a path | ReqResult getExtendedPubkeyFromPath(string path) | should after connect, device should be unlocked. path is somthing like bip32/m/44'/28'/1'/0'/0  |
 | request signature            |  ReqResult signReq(SignReq req) |  |
 | request multiply     |  ReqResult multiplyReq(MultiplyReq req) |            |
 | device disconnected notify            |  void deviceDisconnected(string devId) |        |
@@ -126,23 +129,23 @@ bip32 is the only supported prefix now.
 
 + GCC / CLANG 
 + cmake >= 3.1
-+ Boost 1.67
-+ protobuf 3.6.0 (C++)
-+ libusb 1.0.21 + 
++ Boost >= 1.71
++ protobuf >= 3.6.0 (C++)
++ libusb >= 1.0.21
 
 ### steps
 
 1. git clone https://github.com/KeyboxWallet/keyboxd.git
 1. cd keyboxd
 1. git submodule update --init --recursive
-1. cmake .
+1. cmake . # if you install boost manually, use: cmake -DBOOST_ROOT=$BOOST_INSTALL_DIR . 
 1. make
 
 ## Windows
 
 ### Prerequirements
 
-+ VS2017 (VS2015 should be ok, not tested.)
++ VS2017/VS2019 (VS2015 should be ok, not tested.)
 
 ### steps
 
