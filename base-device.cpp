@@ -239,7 +239,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
         std::string raw_tx;
         if(!base64_decode(unsignedTx, raw_tx)){
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
-            errMessage = "the base64 psbt is invalid";
+            errMessage = "the base64 unsignedTx is invalid";
             return;
         }
         req.set_unsignedtx(raw_tx);
