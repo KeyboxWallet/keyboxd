@@ -58,6 +58,7 @@ set_source_files_properties(${PROTOSRCS} ${PROTOHDRS} PROPERTIES generated TRUE)
 add_custom_command(
     OUTPUT ${PROTOSRCS} ${PROTOHDRS}
     COMMAND ${Protobuf_PROTOC_EXECUTABLE} --cpp_out ${PROTO_GEN_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/depends/protodef messages.proto
+    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/depends/protodef/messages.proto
 )
 
 

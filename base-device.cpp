@@ -219,6 +219,33 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
         req.set_testnet(params["testnet"]);
         req.SerializeToOstream(contentStream);
     }
+    else if (method == "ethereumSignReq")
+    {
+        messageType = MsgTypeEthereumSignRequest;
+        EthereumSignRequest req;
+        if( !params["unsignedTx"].is_string()){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "you must specify unsignedTx(base64 encoded string) in this request";
+            return;
+
+        }
+        if( !params["hdPath"].is_string()){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "you must specify path in this request";
+            return;
+
+        }
+        std::string unsignedTx = params["unsignedTx"];
+        std::string raw_tx;
+        if(!base64_decode(unsignedTx, raw_tx)){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "the base64 psbt is invalid";
+            return;
+        }
+        req.set_unsignedtx(raw_tx);
+        req.set_hdpath(params["hdPath"]);
+        req.SerializeToOstream(contentStream);
+    }
     else
     {
         errCode = KEYBOX_ERROR_CLIENT_ISSUE;
@@ -347,6 +374,30 @@ void BaseDevice::protobuf_to_json_rpc(const uint32_t messageType,
                 result["ver"] = 1;
                 result["type"] = "psbt";
                 result["psbt"] = base64_encode((uint8_t *)reply.psbt().data(), reply.psbt().size());
+                //return cb(0, "signOK", r);
+            }
+            else
+            {
+                errCode = KEYBOX_ERROR_SERVER_ISSUE;
+                errMessage = "parse data from wallet error";
+            }
+        }
+        else
+        {
+            errCode = KEYBOX_ERROR_SERVER_ISSUE;
+            errMessage = "unexpected reply from wallet";
+        }
+    }
+    else if (requestMethod == "ethereumSignReq")
+    {
+        if (messageType == MsgTypeEthereumSignResult)
+        {
+            EthereumSignResult reply;
+            if (reply.ParseFromIstream(replyContentStream))
+            {
+                result["ver"] = 1;
+                result["type"] = "signedTransaction";
+                result["signedTx"] = base64_encode((uint8_t *)reply.signedtx().data(), reply.signedtx().size());
                 //return cb(0, "signOK", r);
             }
             else
