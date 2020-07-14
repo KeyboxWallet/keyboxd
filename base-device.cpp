@@ -57,7 +57,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
             errMessage = "you must specify  params object to call this function";
             return; // cb(KEYBOX_ERROR_CLIENT_ISSUE, "you must specify object param to call this function", r);
         }
-        if (!params["ver"].is_number())
+        if (params.find("ver") == params.end() || !params["ver"].is_number())
         {
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify ver in this request";
@@ -71,7 +71,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
             return; // cb(KEYBOX_ERROR_SERVER_ISSUE, "can not support specified version, only support version 1 now ", r);
         }
 
-        if (!params["path"].is_string())
+        if (params.find("path") == params.end() || !params["path"].is_string())
         {
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify path in this request";
@@ -79,7 +79,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
         }
         std::string path = params["path"];
 
-        if (!params["hash"].is_string())
+        if (params.find("hash") == params.end() ||!params["hash"].is_string())
         {
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify hash in this request";
@@ -138,7 +138,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
             errMessage = "you must specify  params object to call this function";
             return;
         }
-        if (!params["ver"].is_number())
+        if (params.find("ver") == params.end() || !params["ver"].is_number())
         {
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify ver in this request";
@@ -152,7 +152,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
             return;
         }
 
-        if (!params["path"].is_string())
+        if (params.find("path") == params.end() || !params["path"].is_string())
         {
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify path in this request";
@@ -160,7 +160,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
         }
         std::string path = params["path"];
 
-        if (!params["pubkey"].is_string())
+        if (params.find("pubkey") == params.end() || !params["pubkey"].is_string())
         {
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify pubkey(base64 encoded string) in this request";
@@ -197,7 +197,7 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
     {
         messageType = MsgTypeBitcoinSignRequest;
         BitcoinSignRequest req;
-        if( !params["psbt"].is_string()){
+        if( params.find("psbt") == params.end() || !params["psbt"].is_string()){
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify psbt(base64 encoded string) in this request";
             return;
@@ -211,9 +211,34 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
             return;
         }
         req.set_psbt(raw_psbt);
-        if( !params["testnet"].is_boolean()){
+        if( params.find("testnet") == params.end() || !params["testnet"].is_boolean()){
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify testnet flag in this request";
+            return;
+        }
+        if( params.find("coin") == params.end() || !params["coin"].is_string()){
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "you must specify coin in this request(btc, ltc, dash, bch)";
+            return;
+        }
+        std::string coin = params["coin"];
+        std::transform(coin.begin(), coin.end(), coin.begin(),
+            [](unsigned char c){ return std::tolower(c); });
+        if( coin == "btc"){
+            req.set_coin(BITCOIN);
+        }
+        else if( coin == "ltc"){
+            req.set_coin(LITECOIN);
+        }
+        else if( coin == "dash"){
+            req.set_coin(DASH);
+        }
+        else if( coin == "bch"){
+            req.set_coin(BITCOINCASH);
+        }
+        else{
+            errCode = KEYBOX_ERROR_CLIENT_ISSUE;
+            errMessage = "unknown coin in request";
             return;
         }
         req.set_testnet(params["testnet"]);
@@ -223,13 +248,13 @@ void BaseDevice::json_rpc_to_protobuf(const std::string &method,
     {
         messageType = MsgTypeEthereumSignRequest;
         EthereumSignRequest req;
-        if( !params["unsignedTx"].is_string()){
+        if( params.find("unsignedTx") == params.end() || !params["unsignedTx"].is_string()){
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify unsignedTx(base64 encoded string) in this request";
             return;
 
         }
-        if( !params["hdPath"].is_string()){
+        if( params.find("hdPath") == params.end() ||!params["hdPath"].is_string()){
             errCode = KEYBOX_ERROR_CLIENT_ISSUE;
             errMessage = "you must specify path in this request";
             return;
